@@ -19,9 +19,9 @@ class ListModel(QtGui.QStandardItemModel):
         #self.model = QtGui.QStandardItemModel()
         #==============
         # modelSetup
-        theList = ['Monday','Tuesday','Wednesday','Thursday']
+        self._theList = ['Monday','Tuesday','Wednesday','Thursday']
         
-        for item in theList:
+        for item in self._theList:
             # Create an item with a caption
             listItem = QtGui.QStandardItem(item)
         
@@ -42,7 +42,9 @@ class ListModel(QtGui.QStandardItemModel):
         if not index.isValid():
             return None
         if role == QtCore.Qt.DisplayRole:
-            return "001"
+            s =  self._theList[index.row()]
+            return s + "\n12km\t1:10h\n1240kCal"
+            #return "001"
         elif role == QtCore.Qt.DecorationRole:
             return QtGui.QIcon(QtGui.QPixmap('icons/running.png'))
 
@@ -64,7 +66,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
   
         # disable editable feature in list view
-        self.fileBrowser.setEditTriggers(
+        self.listView.setEditTriggers(
                 QtGui.QAbstractItemView.NoEditTriggers 
                 )
         #==============================================================
@@ -72,24 +74,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # setup model for the file system
         # self.model = QtGui.QFileSystemModel()
         # self.model.setRootPath(dataDir)
-        # self.fileBrowser.setRootIndex(self.model.index(dataDir))
+        # self.listView.setRootIndex(self.model.index(dataDir))
         #==============================================================
         # instead of the path, we use our own list
         # try to instantiate own class
         self.model = ListModel()
-        self.fileBrowser.setModel(self.model)
+        self.listView.setModel(self.model)
  
  
 
         #connect callbacks
-        self.fileBrowser.doubleClicked.connect(self.itemDoubleClicked)
-        self.fileBrowser.clicked.connect(self.itemClicked)
+        self.listView.doubleClicked.connect(self.itemDoubleClicked)
+        self.listView.clicked.connect(self.itemClicked)
 
         # Statusbar
         self.statusbar.showMessage('')
 
     def itemClicked(self):
-        f = "dummy"#self.model.fileName(self.fileBrowser.currentIndex())
+        f = "dummy"#self.model.fileName(self.listView.currentIndex())
         print "highlighted: %s" % (f)
 
         self.textDate.setText(f)
@@ -102,9 +104,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
         print "doubleClicked"
-        idx = self.fileBrowser.currentIndex()
+        idx = self.listView.currentIndex()
         print self.model.data(idx)
-        #print self.model.filePath(self.fileBrowser.currentIndex())
+        #print self.model.filePath(self.listView.currentIndex())
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

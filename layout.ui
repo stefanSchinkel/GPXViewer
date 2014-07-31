@@ -27,7 +27,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QListView" name="fileBrowser">
+         <widget class="QListView" name="listView">
           <property name="minimumSize">
            <size>
             <width>200</width>

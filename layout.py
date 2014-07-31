@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'layout.ui'
 #
-# Created: Thu Jul 31 11:39:56 2014
+# Created: Thu Jul 31 13:55:10 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -24,10 +24,10 @@ class Ui_MainWindow(object):
         self.label_8 = QtGui.QLabel(self.centralwidget)
         self.label_8.setObjectName("label_8")
         self.verticalLayout.addWidget(self.label_8)
-        self.fileBrowser = QtGui.QListView(self.centralwidget)
-        self.fileBrowser.setMinimumSize(QtCore.QSize(200, 0))
-        self.fileBrowser.setObjectName("fileBrowser")
-        self.verticalLayout.addWidget(self.fileBrowser)
+        self.listView = QtGui.QListView(self.centralwidget)
+        self.listView.setMinimumSize(QtCore.QSize(200, 0))
+        self.listView.setObjectName("listView")
+        self.verticalLayout.addWidget(self.listView)
         self.horizontalLayout_4.addLayout(self.verticalLayout)
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
