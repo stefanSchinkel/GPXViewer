@@ -9,11 +9,51 @@ from layout import Ui_MainWindow
 import os,sys
 
 
+class ListModel(QtGui.QStandardItemModel):
+    """ A simple model to tie to our list view 
+    """
+    def __init__(self,parent=None):
+
+        #init parent
+        super(ListModel,self).__init__(parent)
+        #self.model = QtGui.QStandardItemModel()
+        #==============
+        # modelSetup
+        theList = ['Monday','Tuesday','Wednesday','Thursday']
+        
+        for item in theList:
+            # Create an item with a caption
+            listItem = QtGui.QStandardItem(item)
+        
+            # Add the item to the model
+            self.appendRow(listItem)
+
+
+    def data(self, index, role = QtCore.Qt.DisplayRole):
+        """ Data function is required to return sth. 
+
+        :arg index: currently selected index
+        :type index:    PySide.QtCore.QModelIndex
+
+        :arg role: what kind of 
+        :type role:
+        """
+        # check in
+        if not index.isValid():
+            return None
+        if role == QtCore.Qt.DisplayRole:
+            return "001"
+        elif role == QtCore.Qt.DecorationRole:
+            return QtGui.QIcon(QtGui.QPixmap('icons/running.png'))
+
+        return None
+
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     
 
     def __init__(self, parent = None):
-        
+
+
         # this has to be stored in some config file
         #dataDir = unicode(os.path.expanduser("~"))
         dataDir = QtCore.QDir.currentPath() + '/data'
@@ -22,14 +62,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # init super and load layout
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-
+  
+        # disable editable feature in list view
+        self.fileBrowser.setEditTriggers(
+                QtGui.QAbstractItemView.NoEditTriggers 
+                )
+        #==============================================================
+        # this works, but only with FileSystem model
         # setup model for the file system
-        self.model = QtGui.QFileSystemModel()
-        self.model.setRootPath(dataDir)
-
-        # and a QTreeView to show it
+        # self.model = QtGui.QFileSystemModel()
+        # self.model.setRootPath(dataDir)
+        # self.fileBrowser.setRootIndex(self.model.index(dataDir))
+        #==============================================================
+        # instead of the path, we use our own list
+        # try to instantiate own class
+        self.model = ListModel()
         self.fileBrowser.setModel(self.model)
-        self.fileBrowser.setRootIndex(self.model.index(dataDir))
+ 
+ 
 
         #connect callbacks
         self.fileBrowser.doubleClicked.connect(self.itemDoubleClicked)
@@ -39,7 +89,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage('')
 
     def itemClicked(self):
-        f = self.model.fileName(self.fileBrowser.currentIndex())
+        f = "dummy"#self.model.fileName(self.fileBrowser.currentIndex())
         print "highlighted: %s" % (f)
 
         self.textDate.setText(f)
@@ -49,9 +99,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.textTotalDuration.setText('1:30h')
         self.textTotalDistance.setText('12 km')
         self.textTotalSpeed.setText('8.8 km/h')
+
+
         print "doubleClicked"
-        print self.model.fileName(self.fileBrowser.currentIndex())
-        print self.model.filePath(self.fileBrowser.currentIndex())
+        idx = self.fileBrowser.currentIndex()
+        print self.model.data(idx)
+        #print self.model.filePath(self.fileBrowser.currentIndex())
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
