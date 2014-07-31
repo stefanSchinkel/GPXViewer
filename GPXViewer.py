@@ -19,21 +19,27 @@ class ListModel(QtGui.QStandardItemModel):
         #self.model = QtGui.QStandardItemModel()
         #==============
         # modelSetup
-        self._theList = ['Monday','Tuesday','Wednesday','Thursday']
-        
+        # the information contained here should go in a class
+        # that has the relevant lists
+        self._theList = ['Monday','Tuesday','Wednesday','Thursday','Friday']
+        self._speed = [10,11,10,11,12]
+        self._duration = ['0:55','1:00','1:05','0:59','0:55']
+        self._distance = [9,10,11,10,9]
+
         for item in self._theList:
             # Create an item with a caption
             listItem = QtGui.QStandardItem(item)
-        
+
             # Add the item to the model
             self.appendRow(listItem)
 
 
     def data(self, index, role = QtCore.Qt.DisplayRole):
-        """ Data function is required to return sth. 
+        """ data function is required to names, icons etc
+        for the QListView to acutally render nicely 
 
         :arg index: currently selected index
-        :type index:    PySide.QtCore.QModelIndex
+        :type index: PySide.QtCore.QModelIndex
 
         :arg role: what kind of 
         :type role:
@@ -42,13 +48,33 @@ class ListModel(QtGui.QStandardItemModel):
         if not index.isValid():
             return None
         if role == QtCore.Qt.DisplayRole:
-            s =  self._theList[index.row()]
-            return s + "\n12km\t1:10h\n1240kCal"
+            return self._theList[index.row()]
             #return "001"
         elif role == QtCore.Qt.DecorationRole:
             return QtGui.QIcon(QtGui.QPixmap('icons/running.png'))
 
         return None
+
+    def getSpeed(self,index):
+        """ returns speed 
+        """
+        if not index.isValid():
+            return None
+        return self._speed[index.row()]
+
+    def getDuration(self,index):
+        """ returns duration 
+        """
+        if not index.isValid():
+            return None
+        return self._duration[index.row()]
+
+    def getDistance(self,index):
+        """ returns distance 
+        """
+        if not index.isValid():
+            return None
+        return self._distance[index.row()]
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     
@@ -80,8 +106,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # try to instantiate own class
         self.model = ListModel()
         self.listView.setModel(self.model)
- 
- 
 
         #connect callbacks
         self.listView.doubleClicked.connect(self.itemDoubleClicked)
@@ -91,22 +115,30 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage('')
 
     def itemClicked(self):
-        f = "dummy"#self.model.fileName(self.listView.currentIndex())
-        print "highlighted: %s" % (f)
+        """ Callback when just pointing at a  list item
+        """
+        # get selected item as Qt ModelIndex *not* <int>
+        idx = self.listView.currentIndex()
 
-        self.textDate.setText(f)
-        self.statusbar.showMessage(f)
+        item =  self.model.data(idx)
+
+        self.textDate.setText(item)
+        self.statusbar.showMessage("Selected Training " + item)
+        
+        speed =  str(self.model.getSpeed(idx))
+        duration = self.model.getDuration(idx)
+        distance = str(self.model.getDistance(idx))
+        
+        self.textDuration.setText(duration)
+        self.textDistance.setText(distance)
+        self.textSpeed.setText(speed)
 
     def itemDoubleClicked(self):
-        self.textTotalDuration.setText('1:30h')
-        self.textTotalDistance.setText('12 km')
-        self.textTotalSpeed.setText('8.8 km/h')
-
-
-        print "doubleClicked"
+        """ On double click the map should be rendered
+        """
         idx = self.listView.currentIndex()
-        print self.model.data(idx)
-        #print self.model.filePath(self.listView.currentIndex())
+        print "Would render training " + self.model.data(idx)
+
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
