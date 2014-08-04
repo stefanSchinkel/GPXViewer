@@ -9,11 +9,79 @@ from layout import Ui_MainWindow
 import os,sys
 
 
+class ListModel(QtGui.QStandardItemModel):
+    """ A simple model to tie to our list view 
+    """
+    def __init__(self,parent=None):
+
+        #init parent
+        super(ListModel,self).__init__(parent)
+        #self.model = QtGui.QStandardItemModel()
+        #==============
+        # modelSetup
+        # the information contained here should go in a class
+        # that has the relevant lists
+        self._theList = ['Monday','Tuesday','Wednesday','Thursday','Friday']
+        self._speed = [10,11,10,11,12]
+        self._duration = ['0:55','1:00','1:05','0:59','0:55']
+        self._distance = [9,10,11,10,9]
+
+        for item in self._theList:
+            # Create an item with a caption
+            listItem = QtGui.QStandardItem(item)
+
+            # Add the item to the model
+            self.appendRow(listItem)
+
+
+    def data(self, index, role = QtCore.Qt.DisplayRole):
+        """ data function is required to names, icons etc
+        for the QListView to acutally render nicely 
+
+        :arg index: currently selected index
+        :type index: PySide.QtCore.QModelIndex
+
+        :arg role: what kind of 
+        :type role:
+        """
+        # check in
+        if not index.isValid():
+            return None
+        if role == QtCore.Qt.DisplayRole:
+            return self._theList[index.row()]
+            #return "001"
+        elif role == QtCore.Qt.DecorationRole:
+            return QtGui.QIcon(QtGui.QPixmap('icons/running.png'))
+
+        return None
+
+    def getSpeed(self,index):
+        """ returns speed 
+        """
+        if not index.isValid():
+            return None
+        return self._speed[index.row()]
+
+    def getDuration(self,index):
+        """ returns duration 
+        """
+        if not index.isValid():
+            return None
+        return self._duration[index.row()]
+
+    def getDistance(self,index):
+        """ returns distance 
+        """
+        if not index.isValid():
+            return None
+        return self._distance[index.row()]
+
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     
 
     def __init__(self, parent = None):
-        
+
+
         # this has to be stored in some config file
         #dataDir = unicode(os.path.expanduser("~"))
         dataDir = QtCore.QDir.currentPath() + '/data'
@@ -22,36 +90,55 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # init super and load layout
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-
+  
+        # disable editable feature in list view
+        self.listView.setEditTriggers(
+                QtGui.QAbstractItemView.NoEditTriggers 
+                )
+        #==============================================================
+        # this works, but only with FileSystem model
         # setup model for the file system
-        self.model = QtGui.QFileSystemModel()
-        self.model.setRootPath(dataDir)
-
-        # and a QTreeView to show it
-        self.fileBrowser.setModel(self.model)
-        self.fileBrowser.setRootIndex(self.model.index(dataDir))
+        # self.model = QtGui.QFileSystemModel()
+        # self.model.setRootPath(dataDir)
+        # self.listView.setRootIndex(self.model.index(dataDir))
+        #==============================================================
+        # instead of the path, we use our own list
+        # try to instantiate own class
+        self.model = ListModel()
+        self.listView.setModel(self.model)
 
         #connect callbacks
-        self.fileBrowser.doubleClicked.connect(self.itemDoubleClicked)
-        self.fileBrowser.clicked.connect(self.itemClicked)
+        self.listView.doubleClicked.connect(self.itemDoubleClicked)
+        self.listView.clicked.connect(self.itemClicked)
 
         # Statusbar
         self.statusbar.showMessage('')
 
     def itemClicked(self):
-        f = self.model.fileName(self.fileBrowser.currentIndex())
-        print "highlighted: %s" % (f)
+        """ Callback when just pointing at a  list item
+        """
+        # get selected item as Qt ModelIndex *not* <int>
+        idx = self.listView.currentIndex()
 
-        self.textDate.setText(f)
-        self.statusbar.showMessage(f)
+        item =  self.model.data(idx)
+
+        self.textDate.setText(item)
+        self.statusbar.showMessage("Selected Training " + item)
+        
+        speed =  str(self.model.getSpeed(idx))
+        duration = self.model.getDuration(idx)
+        distance = str(self.model.getDistance(idx))
+        
+        self.textDuration.setText(duration)
+        self.textDistance.setText(distance)
+        self.textSpeed.setText(speed)
 
     def itemDoubleClicked(self):
-        self.textTotalDuration.setText('1:30h')
-        self.textTotalDistance.setText('12 km')
-        self.textTotalSpeed.setText('8.8 km/h')
-        print "doubleClicked"
-        print self.model.fileName(self.fileBrowser.currentIndex())
-        print self.model.filePath(self.fileBrowser.currentIndex())
+        """ On double click the map should be rendered
+        """
+        idx = self.listView.currentIndex()
+        print "Would render training " + self.model.data(idx)
+
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
