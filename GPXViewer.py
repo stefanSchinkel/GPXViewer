@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 """
@@ -95,6 +95,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.listView.setEditTriggers(
                 QtGui.QAbstractItemView.NoEditTriggers 
                 )
+        # enable multiple selection
+        self.listView.setSelectionMode(
+            QtGui.QAbstractItemView.ExtendedSelection
+            )
         #==============================================================
         # this works, but only with FileSystem model
         # setup model for the file system
