@@ -9,13 +9,13 @@ from layout import Ui_MainWindow
 import os,sys
 
 
-class ListModel(QtGui.QStandardItemModel):
+class CatalogueModel(QtGui.QStandardItemModel):
     """ A simple model to tie to our list view 
     """
     def __init__(self,parent=None):
 
         #init parent
-        super(ListModel,self).__init__(parent)
+        super(CatalogueModel,self).__init__(parent)
         #self.model = QtGui.QStandardItemModel()
         #==============
         # modelSetup
@@ -32,7 +32,7 @@ class ListModel(QtGui.QStandardItemModel):
 
             # Add the item to the model
             self.appendRow(listItem)
-
+        
 
     def data(self, index, role = QtCore.Qt.DisplayRole):
         """ data function is required to names, icons etc
@@ -41,8 +41,8 @@ class ListModel(QtGui.QStandardItemModel):
         :arg index: currently selected index
         :type index: PySide.QtCore.QModelIndex
 
-        :arg role: what kind of 
-        :type role:
+        :arg role: what kind of DisplayRole
+        :type role: QtCore.Qt.DisplayRole
         """
         # check in
         if not index.isValid():
@@ -99,6 +99,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.listView.setSelectionMode(
             QtGui.QAbstractItemView.ExtendedSelection
             )
+
         #==============================================================
         # this works, but only with FileSystem model
         # setup model for the file system
@@ -108,7 +109,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         #==============================================================
         # instead of the path, we use our own list
         # try to instantiate own class
-        self.model = ListModel()
+        self.model = CatalogueModel()
         self.listView.setModel(self.model)
 
         #connect callbacks
