@@ -19,7 +19,7 @@ Developers Guide
 .. toctree::
    :maxdepth: 2
 
-   README
+   CONCEPT
 
    GPXParser
    GPXViewer

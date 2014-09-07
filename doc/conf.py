@@ -16,6 +16,14 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('../'))
 
+# ensure documentation for _privates
+autodoc_default_flags = [
+        'members',
+        'undoc-members',
+        'show-inheritance',
+        #'inherited-members', this is extensive (!)
+        'private-members', #'special-members' for __magic__() as well
+        ]
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
