@@ -2,34 +2,49 @@
 
 from __future__ import print_function,with_statement
 import json
+from GPXParser import GPXParser
 
-def main():
-    from GPXParser import GPXParser
-
+def parseFile(gpxFile):
+    
+    print(gpxFile) 
+    
     # init parser, reads XML and finds points
-    gp = GPXParser()
+    gp = GPXParser(source=gpxFile)
 
     # read the data
     gp.readTrack()
 
-    # total distances
-    print("Total distance is {:.2f} meters".format(sum(gp.track["distances"])))
+    for k,v in gp.summary.iteritems():
+        print("{}\t{}".format(k,v))
 
-    # total time
-    print("Total duration is {:.1f} seconds".format(sum(gp.track["durations"])))
+    # # total distances
+    # print("Total distance is {:.2f} meters".format(sum(gp.track["distances"])))
+
+    # # total time
+    # print("Total duration is {:.1f} seconds".format(sum(gp.track["durations"])))
     
-    # average speed
-    print("Average speed is {:.1f} km/h".format(sum(gp.track["speed"])/len(gp.track["speed"])))
+    # # average speed
+    # print("Average speed is {:.1f} km/h".format(sum(gp.track["speed"])/len(gp.track["speed"])))
 
+    return (gp.summary)
 
-    # storage of 2 copies in list (just to be sure)
+def main():
+
+    # storage list
     catalogue = []
-    catalogue.append(gp.track)
-    catalogue.append(gp.track)
+
+    # read track 01
+    track01 = parseFile(gpxFile='./data/Training01.gpx')
+    catalogue.append(track01)
+
+    track02 = parseFile(gpxFile='./data/Training02.gpx')
+    catalogue.append(track02)
 
     with open('./catalogue.json','wb') as fp:
         json.dump(catalogue,fp)
         fp.close()
+
+
 
 if __name__ == '__main__':
     main()

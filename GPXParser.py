@@ -13,20 +13,32 @@ Public functions
 Public attributes
 -------------------
  - allPoints    : [<ET.element>]  list of ET elements (<trkpt>)
-A dictionary `track` with the following keys:
+ - track        : dictionary with the following keys:
 
-    =========   ============    ============================================
-    key         type            desc
-    =========   ============    ============================================
+    =========   =========       ============================================
+    key         type            description
+    =========   =========       ============================================
     N           <int>           number of trackpoints
     lon         [<float>]       list with longitudes
     lat         [<float>]       list with lattitudes
     ele         [<float>]       list with elevations
-    time        [<datetime>]    list with timestamps as datetime instances
+    time        [<str>]         list with timestamps as ISO8601 strings
     distances   [<float>]       distance between succesive points (in meter)
     durations   [<float>]       time difference between points (in secs)
     speed       [<float>]       list of current speeds (in km/h)
-    =========   ============    ============================================
+    file        <str>           string w/ file name 
+    =========   =========       ============================================
+
+- summary       : dictionary with the following keys:
+    
+    ========    =======     ================
+    key         type        description
+    ========    =======     ================
+    date        <str>       time of track ISO8601
+    duration    <float>     duration in s
+    distance    <float>     distance in m
+    speed       <float>     avg speed in m/s
+    ========    =======     ================
 
 Private functions
 -----------------
@@ -36,7 +48,6 @@ Private functions
 Private attributes
 ------------------
  - _source          : source file 
- -                  : find all <trkpt> elements
 
 
 GPX Dataformat reference/sample:
@@ -100,13 +111,24 @@ class GPXParser(object):
         :type namespaces: {dict}
 
         """
+        # setup data file
+        if source is None:
+            # if source is None:
+            self._source = './data/Training01.gpx'
+        else: 
+            self._source = source
+
+        print "GPXParser: Reading from %s " % self._source
+
+
         if namespaces is None:
             # all the NS we are currently dealing with
             self.namespaces = {'gpx':'http://www.topografix.com/GPX/1/1'}
         else: 
             self.namespaces = namespaces
 
-        # empty list for all the vars needed
+
+        # empty list for all the vars for the details
         self.track = {}
         self.track["N"] = 0;
         self.track["lat"] = []
@@ -117,10 +139,6 @@ class GPXParser(object):
         self.track["durations"] = []    # steps in time (sec)
         self.track["speed"] = []        # speed in km/h
 
-        # setup data file
-        print source
-        # if source is None:
-        self._source = './data/Training.gpx'
 
         # run inital parse
         self._parseXML()
@@ -217,4 +235,12 @@ class GPXParser(object):
         # d/t * 3.6 since we are in m/s but want km/h
         self.track["speed"] = [(d/t)*3.6 if t>0.0 else 0.0 for d,t in
                          zip(self.track["distances"],self.track["durations"])]
+
+        # 4) and the summary dict
+        self.summary = {}
+        self.summary["file"] = self._source
+        self.summary["date"] = self.track["time"][0]
+        self.summary["duration"] = sum(self.track["durations"])
+        self.summary["distance"] = sum(self.track["distances"])
+        self.summary["speed"] = self.summary["distance"]/self.summary["duration"]
 
