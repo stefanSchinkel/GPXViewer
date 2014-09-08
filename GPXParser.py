@@ -12,9 +12,9 @@ Public functions
 
 Public attributes
 -------------------
+
  - allPoints    : [<ET.element>]  list of ET elements (<trkpt>)
  - track        : dictionary with the following keys:
-
     =========   =========       ============================================
     key         type            description
     =========   =========       ============================================
@@ -29,16 +29,16 @@ Public attributes
     file        <str>           string w/ file name 
     =========   =========       ============================================
 
-- summary       : dictionary with the following keys:
-    
-    ========    =======     ================
+ - summary     : dictionary with the following keys:
+
+    ========    =======     =====================
     key         type        description
-    ========    =======     ================
+    ========    =======     =====================
     date        <str>       time of track ISO8601
     duration    <float>     duration in s
     distance    <float>     distance in m
     speed       <float>     avg speed in m/s
-    ========    =======     ================
+    ========    =======     =====================
 
 Private functions
 -----------------
