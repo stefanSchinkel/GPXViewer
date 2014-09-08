@@ -16,7 +16,7 @@ def deg2rad(deg):
 
     return deg / (180 / math.pi)
 
-def distance(lon1, lat1, lon2, lat2):
+def euclidean(lon1, lat1, lon2, lat2):
     """
     Calculate the euclidean distance between two points 
     and return distance in meter
