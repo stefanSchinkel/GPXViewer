@@ -3,15 +3,16 @@
 
 """
 GPXParser
-=========
+---------
+
 :GPXParser: class provides the functionality to read .gpx files 
 
 Public functions
-----------------
+^^^^^^^^^^^^^^^^
  - readTrack()  : reads the track and fills <track> dict
 
 Public attributes
--------------------
+^^^^^^^^^^^^^^^^^
 
  - allPoints    : [<ET.element>]  list of ET elements (<trkpt>)
  - track        : dictionary with the following keys:
@@ -30,7 +31,6 @@ Public attributes
     =========   =========       ============================================
 
  - summary     : dictionary with the following keys:
-
     ========    =======     =====================
     key         type        description
     ========    =======     =====================
@@ -41,47 +41,13 @@ Public attributes
     ========    =======     =====================
 
 Private functions
------------------
- - self._parseXML()         : runs inital XML parse
+^^^^^^^^^^^^^^^^^
  - self._findAllPoints()    : find all <trkpt> elements, sets **allPoints**
 
 Private attributes
-------------------
+^^^^^^^^^^^^^^^^^^
  - _source          : source file 
 
-
-GPX Dataformat reference/sample:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-namespace: http://www.topografix.com/GPX/1/1
-
-Format of CascaRun export is below. There can be
-multiple <trkseg> but for the first implementation
-we just collect all <trkpt> ::
-
-    </gpx>
-        <metadata>
-            <name>Training - Do. Jun 12 07:32:28 2014</name>
-            <desc>5k</desc>
-            <author>
-                <name>BlackBerry 10</name>
-            </author>
-            <extensions>
-                <meerun uid="7cd94e5e" activity="running" filtered="true" interval="1" elevationCorrected="true" manualPause="true" autoPause="false" autoPauseSensitivity="medium" gpsPause="false" createLapOnPause="false">
-                    <filter smoothing="12" maxSpeed="30" badSignals="55.5556" smallMoves="52"/>
-                    <hrm used="false"/>
-                </meerun>
-            </extensions>
-        </metadata>
-        <trk>
-            <trkseg>
-                <trkpt lat="52.4098063200" lon="12.9869185200">
-                    <ele>47.9</ele>
-                    <time>2014-06-12T05:32:28.900</time>
-                </trkpt>
-            </trkseg>
-        </trk>
-    </gpx>    
 """
 
 # imports
@@ -90,16 +56,22 @@ import dateutil.parser
 from utils import  haversine,euclidean
 
 class GPXParser(object):
-    """ GPXParser - reads a gpx file and
+    """ GPXParser - reads a gpx file and an by default assumes the
+    namespace: http://www.topografix.com/GPX/1/1. 
+
+    There can be multiple <trkseg> but for the first implementation
+    we just collect all <trkpt> and continue.
 
     :ivar allPoints: collection of all trackpoints <trkpt>
     :type allPoints: list of ET.elements
+
+    :ivar summary: summary of the training
+    :type summary: <dict>
 
     :ivar track: dictionary describing track details
     :type track: <dict>
 
     """
-
 
     def __init__(self,source='', namespaces=None):
         """ Instantiates an GPXParser object
@@ -140,15 +112,12 @@ class GPXParser(object):
         self.track["speed"] = []        # speed in km/h
 
 
-        # run inital parse
-        self._parseXML()
-        self._findAllPoints()
 
-    def _parseXML(self):
-        """ Prepares file for reading
-        """
+        # run inital parse
         self.tree = ET.parse(self._source)
         self.root = self.tree.getroot()
+
+        self._findAllPoints()
 
     def _findAllPoints(self):
         """ Goes over the ET tree and finds all <trkpt> elements.
