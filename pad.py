@@ -14,35 +14,37 @@ def parseFile(gpxFile):
     # read the data
     gp.readTrack()
 
+    gp.trackSummary()
     for k,v in gp.summary.iteritems():
         print("{}\t{}".format(k,v))
 
-    # # total distances
-    # print("Total distance is {:.2f} meters".format(sum(gp.track["distances"])))
+    print("readTrack")
+    # total distances
+    print("Total distance is {:.2f} meters".format(sum(gp.track["distances"])))
 
-    # # total time
-    # print("Total duration is {:.1f} seconds".format(sum(gp.track["durations"])))
+    # total time
+    print("Total duration is {:.1f} seconds".format(sum(gp.track["durations"])))
     
-    # # average speed
-    # print("Average speed is {:.1f} km/h".format(sum(gp.track["speed"])/len(gp.track["speed"])))
+    # average speed
+    print("Average speed is {:.1f} km/h".format(3.6*sum(gp.track["distances"])/sum(gp.track["durations"])))
 
     return (gp.summary)
 
 def main():
 
     # storage list
-    catalogue = []
+    # catalogue = []
 
     # read track 01
-    track01 = parseFile(gpxFile='./data/Training01.gpx')
-    catalogue.append(track01)
+    parseFile(gpxFile='./data/Training01.gpx')
+    # catalogue.append(track01)
 
-    track02 = parseFile(gpxFile='./data/Training02.gpx')
-    catalogue.append(track02)
+    # track02 = parseFile(gpxFile='./data/Training02.gpx')
+    # catalogue.append(track02)
 
-    with open('./catalogue.json','wb') as fp:
-        json.dump(catalogue,fp)
-        fp.close()
+    # with open('./catalogue.json','wb') as fp:
+    #     json.dump(catalogue,fp)
+    #     fp.close()
 
 
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-
 import math
 
 def deg2rad(deg):
@@ -43,7 +42,6 @@ def euclidean(lon1, lat1, lon2, lat2):
     distance = math.sqrt(x * x + y * y) * ONE_DEGREE
 
     return distance
-
 
 def haversine(lon1, lat1, lon2, lat2):
     """
