@@ -31,13 +31,16 @@ class CatalogueModel(QtGui.QStandardItemModel):
         # the information contained here should go in a class
         # that has the relevant lists or rather dicts
 
+        # the whole init thing can be abstracted to 
+        # create a list that is name as the key and fill it!
+
         #read the catalogue file
         print "reading json"
         with open('./catalogue.json') as fp:
             catalogue = json.load(fp)
 
         print "init lists"
-        self._dates = []
+        self._date = []
         self._speed = []
         self._files = []
         self._duration = []
@@ -49,15 +52,15 @@ class CatalogueModel(QtGui.QStandardItemModel):
                     
             # the dates as datetime instances      
             date = parser.parse(training['date'])           # <unicode>
-            self._dates.append(date)
+            self._date.append(date)                         # <datetime>
             self._duration.append(training["duration"])     # <float>
             self._distance.append(training["distance"])     # <float>
-            self._speed.append(training["speed"])           # <float>
-            self._files.append(training["file"])             # <unicode>
+            self._speed.append(training["speed"])           # <float> km/h
+            self._files.append(training["file"])            # <unicode>
 
 
         #the model needs rows to make the view happy
-        for item in self._dates:
+        for item in self._date:
             # Create an item with a caption
             listItem = QtGui.QStandardItem(item.strftime("%d. %b %Y - %H:%M"))
             # Add the item to the model
@@ -69,7 +72,6 @@ class CatalogueModel(QtGui.QStandardItemModel):
         self._summary["totalDistance"] = sum(self._distance)
         self._summary["totalDuration"] = sum(self._duration)
         self._summary["totalSpeed"] = sum(self._speed)/len(self._speed)
-
 
     def data(self, index, role = QtCore.Qt.DisplayRole):
         """ data function is required to names, icons etc
@@ -87,7 +89,7 @@ class CatalogueModel(QtGui.QStandardItemModel):
 
         # and return a nicely formated <str> for the listview
         if role == QtCore.Qt.DisplayRole:
-            return self._dates[index.row()].strftime("%d. %b %Y - %H:%M")
+            return self._date[index.row()].strftime("%d. %b %Y - %H:%M")
 
         # as well as an icon
         elif role == QtCore.Qt.DecorationRole:
@@ -104,7 +106,7 @@ class CatalogueModel(QtGui.QStandardItemModel):
         """
         if not index.isValid():
             return None
-        return self._dates[index.row()]
+        return self._date[index.row()]
 
     def getSpeed(self,index):
         """ returns speed  from summary
@@ -176,7 +178,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.textTotalDuration.setText(time.strftime('%H:%M:%S', 
                     time.gmtime(self.model._summary["totalDuration"])))
         self.textTotalSpeed.setText("{:.1f} km/h".format(
-                    self.model._summary["totalSpeed"]*3.6))
+                    self.model._summary["totalSpeed"]))
 
     def itemClicked(self):
         """ Callback when just pointing at a  list item
@@ -200,7 +202,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.textDuration.setText(time.strftime('%H:%M:%S', time.gmtime(duration)))
         
         # speed is in m/s so we have to multiply
-        speed =  "{:.1f} km/h".format(self.model.getSpeed(idx)*3.6)
+        speed =  "{:.1f} km/h".format(self.model.getSpeed(idx))
         self.textSpeed.setText(speed)
 
         # and update statusbar
