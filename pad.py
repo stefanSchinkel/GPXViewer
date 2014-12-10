@@ -45,9 +45,12 @@ def main():
     track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
     catalogue.append(track03)
 
+    
+    # sort by date
+    catalogue.sort(key=lambda item:item['date'], reverse=False)
+
     with open('./catalogue.json','wb') as fp:
         json.dump(catalogue,fp)
-        fp.close()
 
 
 
