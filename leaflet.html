@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Leaflet Map</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"/>
+</head>
+<body>
+    <div id="map" style="width: 630px; height: 450px"></div>
+
+    <script
+        src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js">
+    </script>
+
+    <script>
+
+        var map = L.map('map').setView([52.29, 13.07], 14);
+        mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+        L.tileLayer(
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; ' + mapLink,
+            maxZoom: 18,
+            }).addTo(map);
+
+        // polyline is what we'll use for tracks
+        var polyline = L.polyline([
+            [52.2986, 13.0796],
+            [52.2981, 13.0786],
+            [52.2979, 13.0776],
+            [52.2990, 13.0775],
+            [52.2992, 13.0788]]
+            ).addTo(map);
+        // add a marker, could be used for details such as
+        // every 1km or so
+        L.marker([52.2986, 13.0796]).addTo(map)
+        .bindPopup('A pretty CSS3 popup. <br> Easily customizable.')
+        .openPopup(); 
+    
+    </script>
+</body>
+</html>
