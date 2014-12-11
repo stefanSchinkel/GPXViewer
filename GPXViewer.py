@@ -16,7 +16,7 @@ from layout import Ui_MainWindow
 from dateutil import parser
 import time
 
-import os,sys
+import sys
 
 
 class CatalogueModel(QtGui.QStandardItemModel):
