@@ -3,6 +3,8 @@
 from __future__ import print_function
 import math
 
+
+
 def deg2rad(deg):
     """Convert degrees to radians
 
@@ -81,4 +83,41 @@ def haversine(lon1, lat1, lon2, lat2):
     #                      math.cos(deg2rad(lon1 - lon2)))
     return dist
 
+def writeTrackFile(gpxFile):
+    from GPXParser import GPXParser
+    """Write the trackpoints to src/track.js, which is 
+    the JS file that renders the track on the map. 
+
+    :param gpxFile: lattitude of second point  
+    :type gpxFile: <float> 
+    """
+    # init parser, reads XML and finds points
+    gpx = GPXParser(source=gpxFile)
+
+    # read track details
+    gpx.trackDetails()
+
+    trackHeader="""    
+    var map = L.map('map').setView([{},{}], 14);
+    mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+    L.tileLayer(
+            'http://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+            attribution: 'Map data &copy; ' + mapLink,
+            maxZoom: 18,
+            }}).addTo(map);
+    track = ["""
+    trackFooter="""
+    ];
+    var polyline = L.polyline(track).addTo(map);
+    """
+    # open js file
+    with open ('./src/track.js','wb') as fp:
+        print(trackHeader.format(gpx.track['lat'][0],
+                                gpx.track['lon'][0]),
+                                file=fp)
+        for idx in range(gpx.track['N']):
+            print ("\t[{},{}],".format(gpx.track['lat'][idx],
+                                    gpx.track['lon'][idx]),
+                                    file=fp)
+        print(trackFooter,file=fp)
 

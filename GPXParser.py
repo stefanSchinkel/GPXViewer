@@ -144,7 +144,7 @@ class GPXParser(object):
         """ Parse only the key data needed for the model in GPXViewer. Details will
         only be read on demand.
 
-        This function populats the summary dictionary.
+        This function populates the summary dictionary.
 
         """
         # populate the summary dict w/ the filename
@@ -179,7 +179,6 @@ class GPXParser(object):
         """
         # empty list for all the vars for the details
         self.track["source"] = self._source
-        self.track["N"] = 0;
         self.track["lat"] = []
         self.track["lon"] = []
         self.track["ele"] = []

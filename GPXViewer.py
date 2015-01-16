@@ -12,10 +12,12 @@ import json
 from PySide import QtCore,QtGui
 from layout import Ui_MainWindow
 
+
 # for fiddlings w/ ISO8601 and <datetime>s
 from dateutil import parser
 import time
 
+from utils import writeTrackFile
 import sys
 
 
@@ -129,6 +131,13 @@ class CatalogueModel(QtGui.QStandardItemModel):
             return None
         return self._distance[index.row()]
 
+    def getFile(self,index):
+        """ returns distance  from summary
+        """
+        if not index.isValid():
+            return None
+        return self._files[index.row()]
+
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent = None):
@@ -208,6 +217,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # and update statusbar
         self.statusbar.showMessage("Selected Training from " + date.strftime("%d.%m.%Y"))
 
+        # acquire the filename
+        gpxFile = self.model.getFile(idx)
+        writeTrackFile(gpxFile)
+        self.webView.reload()
+        
     def itemDoubleClicked(self):
         """ On double click the map should be rendered
         """

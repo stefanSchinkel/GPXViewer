@@ -30,27 +30,57 @@ def parseFile(gpxFile):
 
     return (gp.summary)
 
+def writeTrack(gpxFile):
+    """write leaflet compatible track array"""
+    # init parser, reads XML and finds points
+    gpx = GPXParser(source=gpxFile)
+
+    # read track details
+    gpx.trackDetails()
+
+    trackHeader="""    
+    var map = L.map('map').setView([{},{}], 14);
+    mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+    L.tileLayer(
+            'http://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+            attribution: 'Map data &copy; ' + mapLink,
+            maxZoom: 18,
+            }}).addTo(map);
+    track = ["""
+    # open js file
+    with open ('./src/track.js','wb') as fp:
+        print(trackHeader.format(gpx.track['lat'][0],
+                                gpx.track['lon'][0]),
+                                file=fp)
+        for idx in range(gpx.track['N']):
+            print ("\t[{},{}],".format(gpx.track['lat'][idx],
+                                    gpx.track['lon'][idx]),
+                                    file=fp)
+        print("];\nvar polyline = L.polyline(track).addTo(map);",file=fp)
+
 def main():
 
+    writeTrack(gpxFile='./data/Training01.gpx')
+
     # storage list
-    catalogue = []
+    # catalogue = []
 
-    # read track 01
-    track01 = parseFile(gpxFile='./data/Training01.gpx')
-    catalogue.append(track01)
+    # # read track 01
+    # track01 = parseFile(gpxFile='./data/Training01.gpx')
+    # catalogue.append(track01)
 
-    track02 = parseFile(gpxFile='./data/Training02.gpx')
-    catalogue.append(track02)
+    # track02 = parseFile(gpxFile='./data/Training02.gpx')
+    # catalogue.append(track02)
     
-    track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
-    catalogue.append(track03)
+    # track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
+    # catalogue.append(track03)
 
     
-    # sort by date
-    catalogue.sort(key=lambda item:item['date'], reverse=False)
+    # # sort by date
+    # catalogue.sort(key=lambda item:item['date'], reverse=False)
 
-    with open('./catalogue.json','wb') as fp:
-        json.dump(catalogue,fp)
+    # with open('./catalogue.json','wb') as fp:
+    #     json.dump(catalogue,fp)
 
 
 
