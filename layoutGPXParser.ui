@@ -65,7 +65,7 @@
                <x>20</x>
                <y>30</y>
                <width>281</width>
-               <height>91</height>
+               <height>114</height>
               </rect>
              </property>
              <layout class="QFormLayout" name="formLayout">
@@ -278,7 +278,6 @@
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
-    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
@@ -292,12 +291,12 @@
   </widget>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>Add Training</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>Exit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
@@ -309,6 +308,11 @@
    </property>
    <property name="font">
     <font/>
+   </property>
+  </action>
+  <action name="actionDelete_Training">
+   <property name="text">
+    <string>Delete Training</string>
    </property>
   </action>
  </widget>

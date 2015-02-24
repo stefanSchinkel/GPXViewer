@@ -10,13 +10,14 @@ import json
 
 # QT stuff
 from PySide import QtCore,QtGui
-from layout import Ui_MainWindow
+from layoutGPXParser import Ui_MainWindow
 
 
 # for fiddlings w/ ISO8601 and <datetime>s
 from dateutil import parser
 import time
 
+from GPXParser import GPXParser
 from utils import writeTrackFile
 import sys
 
@@ -139,7 +140,8 @@ class CatalogueModel(QtGui.QStandardItemModel):
         return self._files[index.row()]
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
-
+    """ A QTMain Window, the whole thing
+    """
     def __init__(self, parent = None):
 
 
@@ -156,12 +158,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.listView.setEditTriggers(
                 QtGui.QAbstractItemView.NoEditTriggers 
                 )
-        # # enable multiple selection ? 
-        # # rather not for now since the we'd have to plot 
-        # # more than one track on the maps
-        # self.listView.setSelectionMode(
-        #     QtGui.QAbstractItemView.ExtendedSelection
-        #     )
 
         # instantiate the CatalogueModel and tie to view
         self.model = CatalogueModel()
@@ -170,10 +166,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # and populate summary
         self.updateSummary()
 
-
         # and connect callbacks
         self.listView.doubleClicked.connect(self.itemDoubleClicked)
         self.listView.clicked.connect(self.itemClicked)
+        self.actionOpen.activated.connect(self.addTraining)
 
         # Statusbar
         self.statusbar.showMessage('READY ...')
@@ -218,9 +214,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage("Selected Training from " + date.strftime("%d.%m.%Y"))
 
         # acquire the filename
-        gpxFile = self.model.getFile(idx)
-        writeTrackFile(gpxFile)
-        self.webView.reload()
+        # gpxFile = self.model.getFile(idx)
+        # writeTrackFile(gpxFile)
+        # self.webView.reload()
         
     def itemDoubleClicked(self):
         """ On double click the map should be rendered
@@ -228,9 +224,48 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         idx = self.listView.currentIndex()
         print "Would render training " + self.model.data(idx)
 
+    def addTraining(self):
+        """Callback to add a new training to the catalogue
+        """
+
+        print "Hit callback"
+        fileName, _ = QtGui.QFileDialog.getOpenFileName(parent=self, 
+                    caption = 'Select file to be added',
+                    dir = QtCore.QDir.homePath(),
+                    filter = '*.gpx')
+
+
+
+        with open('./catalogue.json','r') as fp:
+            catalogue = json.load(fp)
+
+        gpx = GPXParser(source=fileName)
+        gpx.trackSummary()
+        newTrack  = gpx.summary;
+        catalogue.append(newTrack)
+
+        with open('./catalogue.json', 'wb') as f:
+            json.dump(catalogue, f)
+
+
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     win = MainWindow()
     win.show()
     win.raise_()
     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
