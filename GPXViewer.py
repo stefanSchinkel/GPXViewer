@@ -214,9 +214,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.statusbar.showMessage("Selected Training from " + date.strftime("%d.%m.%Y"))
 
         # acquire the filename
-        # gpxFile = self.model.getFile(idx)
-        # writeTrackFile(gpxFile)
-        # self.webView.reload()
+        gpxFile = self.model.getFile(idx)
+        writeTrackFile(gpxFile)
+        self.webView.reload()
         
     def itemDoubleClicked(self):
         """ On double click the map should be rendered
