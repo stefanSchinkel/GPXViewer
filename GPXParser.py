@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" The ``GPXParser`` class encapsulates parsing of .gpx files. 
+""" The ``GPXParser`` class encapsulates parsing of .gpx files.
 
 Public functions
 ^^^^^^^^^^^^^^^^
@@ -23,7 +23,7 @@ Public attributes
     distances   [<float>]       distance between succesive points (in meter)
     durations   [<float>]       time difference between points (in secs)
     speed       [<float>]       list of current speeds (in km/h)
-    file        <str>           string w/ file name 
+    file        <str>           string w/ file name
     =========   =========       ============================================
 
  - summary     : dictionary with the following keys:
@@ -42,7 +42,7 @@ Private functions
 
 Private attributes
 ^^^^^^^^^^^^^^^^^^
- - _source          : source file 
+ - _source          : source file
 """
 
 
@@ -53,7 +53,7 @@ from utils import  haversine,euclidean
 
 class GPXParser(object):
     """ GPXParser - reads a gpx file and an by default assumes the
-    namespace: http://www.topografix.com/GPX/1/1. 
+    namespace: http://www.topografix.com/GPX/1/1.
     While there can be multiple <trkseg> but for the first implementation
     we just collect all <trkpt> and continue.
 
@@ -85,16 +85,16 @@ class GPXParser(object):
         if source is None:
             # if source is None:
             self._source = './data/Training01.gpx'
-        else: 
+        else:
             self._source = source
 
         if namespaces is None:
             # all the NS we are currently dealing with
             self.namespaces = {'gpx':'http://www.topografix.com/GPX/1/1'}
-        else: 
+        else:
             self.namespaces = namespaces
 
-        # init dicts 
+        # init dicts
         self.summary = dict()
         self.track = dict()
 
@@ -119,10 +119,10 @@ class GPXParser(object):
         """
 
         # find all tracks
-        # the cElementTree implementation does not accept named parameters, 
+        # the cElementTree implementation does not accept named parameters,
         # but it works w/  ordered ones
-        # allTracks = self._root.findall('gpx:trk',namespaces=self.namespaces) 
-        allTracks = self._root.findall('gpx:trk',self.namespaces) 
+        # allTracks = self._root.findall('gpx:trk',namespaces=self.namespaces)
+        allTracks = self._root.findall('gpx:trk',self.namespaces)
 
         # then find all segs
         allSegs = []
@@ -134,7 +134,7 @@ class GPXParser(object):
         self.allPoints = []
 
         for seg in allSegs:
-            # allPoints.extend(seg.findall('gpx:trkpt', namespaces=self.namespaces))        
+            # allPoints.extend(seg.findall('gpx:trkpt', namespaces=self.namespaces))
             self.allPoints.extend(seg.findall('gpx:trkpt', self.namespaces))
 
         self.track["N"] = len(self.allPoints)
@@ -149,14 +149,14 @@ class GPXParser(object):
         """
         # populate the summary dict w/ the filename
         self.summary["file"] = self._source
-        
+
         # date as ISO string
         self.summary["date"] = self.allPoints[0].find('gpx:time',self.namespaces).text
 
         # duration
         t0 = dateutil.parser.parse(self.allPoints[0].find('gpx:time',self.namespaces).text)
         t1 = dateutil.parser.parse(self.allPoints[-1].find('gpx:time',self.namespaces).text)
-        self.summary["duration"] = (t1-t0).total_seconds() 
+        self.summary["duration"] = (t1-t0).total_seconds()
 
         # distance
         lat = []
@@ -168,13 +168,13 @@ class GPXParser(object):
                             lat[:-1],lat[1:],lon[:-1],lon[1:])])
 
         # and average speed in km/h
-        self.summary["speed"] = 3.6 * self.summary["distance"]/self.summary["duration"] 
+        self.summary["speed"] = 3.6 * self.summary["distance"]/self.summary["duration"]
 
     def trackDetails(self):
-        """Read the track in the GPX file and populate the `track` dictionary. 
+        """Read the track in the GPX file and populate the `track` dictionary.
         The time is read twice once local (as datetime so we can easily compute
         offsets) and once as an ISO 8601 string (as it is written) to be stored
-        in the `track` dict. 
+        in the `track` dict.
 
         """
         # empty list for all the vars for the details
@@ -192,12 +192,12 @@ class GPXParser(object):
 
         # extract original lat/lon and cast as float
         for point in self.allPoints:
-            
+
             # lat/lon/ele are just list of floats
             self.track["lat"].append(float(point.attrib['lat']))
             self.track["lon"].append(float(point.attrib['lon']))
             self.track["ele"].append(float(point.find('gpx:ele',self.namespaces).text))
-            
+
             # self.time  are datetime instances whereas track["time"] are
             # ISO strings (so the can be serialized)
             times.append(dateutil.parser.parse(
@@ -206,7 +206,7 @@ class GPXParser(object):
             self.track["time"].append(point.find('gpx:time',self.namespaces).text                )
 
         # here we already compute individual steps between trackpoints
-        
+
         # 1) distance (haversine)
         # list comprehension is fancy but a tad unreadable
         # also decide wether we need haversion or if euclidean is enough
@@ -214,13 +214,13 @@ class GPXParser(object):
                             self.track["lat"][:-1],self.track["lat"][1:],
                             self.track["lon"][:-1],self.track["lon"][1:])]
 
-        # # the euclidean should work for small distances too and is less demanding    
+        # # the euclidean should work for small distances too and is less demanding
         # self.track["distances"] = [euclidean(y0,x0,y1,x1)  for x0,x1,y0,y1 in zip(
         #                     self.track["lat"][:-1],self.track["lat"][1:],
         #                     self.track["lon"][:-1],self.track["lon"][1:])]
 
         # 2) durations (these have to be converted to datatime object)
-        # actually we could just substract the seconds since the GPS *should* be 
+        # actually we could just substract the seconds since the GPS *should* be
         # sampled every few secs but you never know
         self.track["durations"] = [(t1-t0).total_seconds() for t0,t1 in zip(
                             times[:-1],times[1:])]
