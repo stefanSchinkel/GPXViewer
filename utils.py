@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 import math
-
+import os
 
 
 def deg2rad(deg):
@@ -19,17 +19,17 @@ def deg2rad(deg):
 
 def euclidean(lon1, lat1, lon2, lat2):
     """
-    Calculate the euclidean distance between two points 
+    Calculate the euclidean distance between two points
     and return distance in meter
 
-    :param lon1: longitude of first point  
-    :type lon1: <float> 
-    :param lat1: lattitude of first point  
-    :type lat1: <float> 
-    :param lon2: longitude of second point  
-    :type lon2: <float> 
-    :param lat2: lattitude of second point  
-    :type lat2: <float> 
+    :param lon1: longitude of first point
+    :type lon1: <float>
+    :param lat1: lattitude of first point
+    :type lat1: <float>
+    :param lon2: longitude of second point
+    :type lon2: <float>
+    :param lat2: lattitude of second point
+    :type lat2: <float>
 
     :return: distance in meters
     :rtype: <float>
@@ -37,7 +37,7 @@ def euclidean(lon1, lat1, lon2, lat2):
 
 
 
-    ONE_DEGREE = 1000. * 10000.8 / 90.    
+    ONE_DEGREE = 1000. * 10000.8 / 90.
     coef = math.cos(lat1 / 180. * math.pi)
     x = lat2 - lat1
     y = (lon2 - lon1) * coef
@@ -47,57 +47,61 @@ def euclidean(lon1, lat1, lon2, lat2):
 
 def haversine(lon1, lat1, lon2, lat2):
     """
-    Calculate the great circle distance between two points 
+    Calculate the great circle distance between two points
     on the earth (specified in decimal degrees) and return distance
     in meter
 
-    :param lon1: longitude of first point  
-    :type lon1: <float> 
-    :param lat1: lattitude of first point  
-    :type lat1: <float> 
-    :param lon2: longitude of second point  
-    :type lon2: <float> 
-    :param lat2: lattitude of second point  
-    :type lat2: <float> 
+    :param lon1: longitude of first point
+    :type lon1: <float>
+    :param lat1: lattitude of first point
+    :type lat1: <float>
+    :param lon2: longitude of second point
+    :type lon2: <float>
+    :param lat2: lattitude of second point
+    :type lat2: <float>
 
     :return: distance in meters
     :rtype: <float>
     """
-    # convert decimal degrees to radians 
+    # convert decimal degrees to radians
     lon1, lat1, lon2, lat2 = map(deg2rad, [lon1, lat1, lon2, lat2])
 
-    # haversine formula 
-    dlon = lon2 - lon1 
-    dlat = lat2 - lat1 
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
     a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
-    c = 2 * math.asin(math.sqrt(a)) 
+    c = 2 * math.asin(math.sqrt(a))
 
     # 63710000 m is the radius of the Earth
     dist = 6371000 * c
 
     # r = 6371000
     # dist = r * math.acos(math.sin(deg2rad(lat1)) *
-    #                      math.sin(deg2rad(lat2)) + 
+    #                      math.sin(deg2rad(lat2)) +
     #                      math.cos(deg2rad(lat1)) *
-    #                      math.cos(deg2rad(lat2)) * 
+    #                      math.cos(deg2rad(lat2)) *
     #                      math.cos(deg2rad(lon1 - lon2)))
     return dist
 
 def writeTrackFile(gpxFile):
     from GPXParser import GPXParser
-    """Write the trackpoints to src/track.js, which is 
-    the JS file that renders the track on the map. 
+    """Write the trackpoints to src/track.js, which is
+    the JS file that renders the track on the map.
 
-    :param gpxFile: lattitude of second point  
-    :type gpxFile: <float> 
+    :param gpxFile: lattitude of second point
+    :type gpxFile: <float>
     """
+
+    # rm old JS
+    os.remove('./src/track.js')
+
     # init parser, reads XML and finds points
     gpx = GPXParser(source=gpxFile)
 
     # read track details
     gpx.trackDetails()
 
-    trackHeader="""    
+    trackHeader="""
     var map = L.map('map').setView([{},{}], 14);
     mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer(
@@ -109,6 +113,7 @@ def writeTrackFile(gpxFile):
     trackFooter="""
     ];
     var polyline = L.polyline(track).addTo(map);
+    map.fitBounds(polyline.getBounds());
     """
     # open js file
     with open ('./src/track.js','wb') as fp:
