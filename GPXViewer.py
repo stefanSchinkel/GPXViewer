@@ -33,7 +33,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # this has to be stored in some config file
         #dataDir = unicode(os.path.expanduser("~"))
         dataDir = QtCore.QDir.currentPath() + '/data'
-        print dataDir
 
         # init super and load layout
         super(MainWindow, self).__init__(parent)
@@ -45,7 +44,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 )
 
         # instantiate the CatalogueModel and tie to view
-        self.model = CatalogueModel()
+        self.model = CatalogueModel(dataDir)
         self.listView.setModel(self.model)
 
         # and populate summary

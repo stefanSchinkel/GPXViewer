@@ -4,7 +4,7 @@
 """ A model for the  training catalogue
 """
 # for accessing json
-import json
+import json, os
 
 # QT stuff
 from PySide import QtCore,QtGui
@@ -16,7 +16,7 @@ from dateutil import parser
 class CatalogueModel(QtGui.QStandardItemModel):
     """ A simple model to tie to our list view
     """
-    def __init__(self,parent=None):
+    def __init__(self,dataDir, parent=None):
 
         #init parent
         super(CatalogueModel,self).__init__(parent)
@@ -29,8 +29,10 @@ class CatalogueModel(QtGui.QStandardItemModel):
         # create a list that is name as the key and fill it!
 
         #read the catalogue file
-        print "reading json"
-        with open('./catalogue.json') as fp:
+        dataFile =os.path.join(dataDir,'catalogue.json')
+        print "reading json" + dataFile
+
+        with open(dataFile) as fp:
             catalogue = json.load(fp)
 
         print "init lists"

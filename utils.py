@@ -93,7 +93,7 @@ def writeTrackFile(gpxFile):
     """
 
     # rm old JS
-    os.remove('./src/track.js')
+    # os.remove('./src/track.js')
 
     # init parser, reads XML and finds points
     gpx = GPXParser(source=gpxFile)

@@ -5,9 +5,9 @@ import json
 from GPXParser import GPXParser
 
 def parseFile(gpxFile):
-    
-    print(gpxFile) 
-    
+
+    print(gpxFile)
+
     # init parser, reads XML and finds points
     gp = GPXParser(source=gpxFile)
 
@@ -24,7 +24,7 @@ def parseFile(gpxFile):
 
     # # total time
     # print("Total duration is {:.1f} seconds".format(gp.summary["durations"]))
-    
+
     # average speed
     # print("Average speed is {:.1f} km/h".format(3.6*sum(gp.track["distances"])/sum(gp.track["durations"])))
 
@@ -38,7 +38,7 @@ def writeTrack(gpxFile):
     # read track details
     gpx.trackDetails()
 
-    trackHeader="""    
+    trackHeader="""
     var map = L.map('map').setView([{},{}], 14);
     mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer(
@@ -60,27 +60,25 @@ def writeTrack(gpxFile):
 
 def main():
 
-    writeTrack(gpxFile='./data/Training01.gpx')
-
     # storage list
-    # catalogue = []
+    catalogue = []
 
     # # read track 01
-    # track01 = parseFile(gpxFile='./data/Training01.gpx')
-    # catalogue.append(track01)
+    track01 = parseFile(gpxFile='./data/Training01.gpx')
+    catalogue.append(track01)
 
-    # track02 = parseFile(gpxFile='./data/Training02.gpx')
-    # catalogue.append(track02)
-    
+    track02 = parseFile(gpxFile='./data/Training02.gpx')
+    catalogue.append(track02)
+
     # track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
     # catalogue.append(track03)
 
-    
-    # # sort by date
-    # catalogue.sort(key=lambda item:item['date'], reverse=False)
 
-    # with open('./catalogue.json','wb') as fp:
-    #     json.dump(catalogue,fp)
+    # # sort by date
+    catalogue.sort(key=lambda item:item['date'], reverse=False)
+
+    with open('data/catalogue.json','wb') as fp:
+        json.dump(catalogue,fp)
 
 
 
