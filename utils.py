@@ -52,16 +52,16 @@ def haversine(lon1, lat1, lon2, lat2):
     in meter
 
     :param lon1: longitude of first point
-    :type lon1: <float>
+    :type lon1: float
     :param lat1: lattitude of first point
-    :type lat1: <float>
+    :type lat1: float
     :param lon2: longitude of second point
-    :type lon2: <float>
+    :type lon2: float
     :param lat2: lattitude of second point
-    :type lat2: <float>
+    :type lat2: float
 
     :return: distance in meters
-    :rtype: <float>
+    :rtype: float
     """
     # convert decimal degrees to radians
     lon1, lat1, lon2, lat2 = map(deg2rad, [lon1, lat1, lon2, lat2])
@@ -88,8 +88,8 @@ def writeTrackFile(gpxFile):
     """Write the trackpoints to src/track.js, which is
     the JS file that renders the track on the map.
 
-    :param gpxFile: lattitude of second point
-    :type gpxFile: <float>
+    :param gpxFile: GPX file holding track
+    :type gpxFile: String
     """
 
     # rm old JS
