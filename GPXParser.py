@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# pylint: disable=c0103
+
 """ The ``GPXParser`` class encapsulates parsing of .gpx files.
 
 Public functions
@@ -49,7 +51,10 @@ Private attributes
 # imports
 import xml.etree.cElementTree as ET # XML parser
 import dateutil.parser
-from utils import  haversine,euclidean
+from utils import haversine
+# from utils import euclidean
+
+debug = True
 
 class GPXParser(object):
     """ GPXParser - reads a gpx file and an by default assumes the
@@ -77,13 +82,13 @@ class GPXParser(object):
     :type track: <dict>
     """
 
-    def __init__(self,source='', namespaces=None):
+    def __init__(self, source='', namespaces=None):
         """ Instantiates an GPXParser object
 
        """
         # setup data file
         if source is None:
-            # if source is None:
+            #only for testing
             self._source = './data/Training01.gpx'
         else:
             self._source = source
@@ -121,24 +126,22 @@ class GPXParser(object):
         # find all tracks
         # the cElementTree implementation does not accept named parameters,
         # but it works w/  ordered ones
-        # allTracks = self._root.findall('gpx:trk',namespaces=self.namespaces)
-        allTracks = self._root.findall('gpx:trk',self.namespaces)
+        allTracks = self._root.findall('gpx:trk', self.namespaces)
 
         # then find all segs
         allSegs = []
         for track in allTracks:
-            # allSegs.extend( track.findall('gpx:trkseg',namespaces=self.namespaces))
-            allSegs.extend( track.findall('gpx:trkseg',self.namespaces))
+            allSegs.extend(track.findall('gpx:trkseg', self.namespaces))
 
         # and find all points
         self.allPoints = []
 
         for seg in allSegs:
-            # allPoints.extend(seg.findall('gpx:trkpt', namespaces=self.namespaces))
             self.allPoints.extend(seg.findall('gpx:trkpt', self.namespaces))
 
         self.track["N"] = len(self.allPoints)
-        print "I found %d trackpoints" % self.track["N"]
+        if debug:
+            print "I found %d trackpoints" % self.track["N"]
 
     def trackSummary(self):
         """ Parse only the key data needed for the model in GPXViewer. Details will
@@ -151,11 +154,17 @@ class GPXParser(object):
         self.summary["file"] = self._source
 
         # date as ISO string
-        self.summary["date"] = self.allPoints[0].find('gpx:time',self.namespaces).text
+        # with some sources the date is only in the metadata and not each track point
+        # self.summary["date"] = self.allPoints[0].find('gpx:time', self.namespaces).text
+        metaData = self._root.findall('gpx:metadata', self.namespaces)
+        for md in metaData:
+            time = md.findall('gpx:time', self.namespaces)
+
+        self.summary["date"] = time[0].text
 
         # duration
-        t0 = dateutil.parser.parse(self.allPoints[0].find('gpx:time',self.namespaces).text)
-        t1 = dateutil.parser.parse(self.allPoints[-1].find('gpx:time',self.namespaces).text)
+        t0 = dateutil.parser.parse(self.allPoints[0].find('gpx:time', self.namespaces).text)
+        t1 = dateutil.parser.parse(self.allPoints[-1].find('gpx:time', self.namespaces).text)
         self.summary["duration"] = (t1-t0).total_seconds()
 
         # distance
@@ -164,8 +173,9 @@ class GPXParser(object):
         for point in self.allPoints:
             lat.append(float(point.attrib['lat']))
             lon.append(float(point.attrib['lon']))
-        self.summary["distance"] = sum([haversine(y0,x0,y1,x1)  for x0,x1,y0,y1 in zip(
-                            lat[:-1],lat[1:],lon[:-1],lon[1:])])
+        _dist = sum([haversine(y0, x0, y1, x1)  for x0, x1, y0, y1 in zip(
+            lat[:-1], lat[1:], lon[:-1], lon[1:])])
+        self.summary["distance"] = _dist
 
         # and average speed in km/h
         self.summary["speed"] = 3.6 * self.summary["distance"]/self.summary["duration"]
@@ -196,23 +206,23 @@ class GPXParser(object):
             # lat/lon/ele are just list of floats
             self.track["lat"].append(float(point.attrib['lat']))
             self.track["lon"].append(float(point.attrib['lon']))
-            self.track["ele"].append(float(point.find('gpx:ele',self.namespaces).text))
+            self.track["ele"].append(float(point.find('gpx:ele', self.namespaces).text))
 
             # self.time  are datetime instances whereas track["time"] are
             # ISO strings (so the can be serialized)
             times.append(dateutil.parser.parse(
-                point.find('gpx:time',self.namespaces).text
+                point.find('gpx:time', self.namespaces).text
                 ))
-            self.track["time"].append(point.find('gpx:time',self.namespaces).text                )
+            self.track["time"].append(point.find('gpx:time', self.namespaces).text)
 
         # here we already compute individual steps between trackpoints
 
         # 1) distance (haversine)
         # list comprehension is fancy but a tad unreadable
         # also decide wether we need haversion or if euclidean is enough
-        self.track["distances"] = [haversine(y0,x0,y1,x1)  for x0,x1,y0,y1 in zip(
-                            self.track["lat"][:-1],self.track["lat"][1:],
-                            self.track["lon"][:-1],self.track["lon"][1:])]
+        self.track["distances"] = [haversine(y0, x0, y1, x1)  for x0, x1, y0, y1 in zip(
+            self.track["lat"][:-1], self.track["lat"][1:],
+            self.track["lon"][:-1], self.track["lon"][1:])]
 
         # # the euclidean should work for small distances too and is less demanding
         # self.track["distances"] = [euclidean(y0,x0,y1,x1)  for x0,x1,y0,y1 in zip(
@@ -222,12 +232,12 @@ class GPXParser(object):
         # 2) durations (these have to be converted to datatime object)
         # actually we could just substract the seconds since the GPS *should* be
         # sampled every few secs but you never know
-        self.track["durations"] = [(t1-t0).total_seconds() for t0,t1 in zip(
-                            times[:-1],times[1:])]
+        self.track["durations"] = [(t1-t0).total_seconds() for t0, t1 in zip(
+            times[:-1], times[1:])]
 
         # 3) speed in segments
         # d/t * 3.6 since we are in m/s but want km/h
-        self.track["speed"] = [(d/t)*3.6 if t>0.0 else 0.0 for d,t in
-                         zip(self.track["distances"],self.track["durations"])]
+        self.track["speed"] = [(d/t)*3.6 if t > 0.0 else 0.0 for d, t in zip(
+            self.track["distances"], self.track["durations"])]
 
 
