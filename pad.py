@@ -70,11 +70,11 @@ def main():
     track02 = parseFile(gpxFile='./data/Training02.gpx')
     catalogue.append(track02)
 
-    # track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
-    # catalogue.append(track03)
+    # # track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
+    # # catalogue.append(track03)
 
 
-    # # sort by date
+    # sort by date
     catalogue.sort(key=lambda item:item['date'], reverse=False)
 
     with open('data/catalogue.json','wb') as fp:

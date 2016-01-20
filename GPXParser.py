@@ -54,7 +54,7 @@ import dateutil.parser
 from utils import haversine
 # from utils import euclidean
 
-debug = True
+debug = False
 
 class GPXParser(object):
     """ GPXParser - reads a gpx file and an by default assumes the

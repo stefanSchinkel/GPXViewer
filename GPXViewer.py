@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
+# pylint: disable=c0103
 """
+GPXViewer: the thing as such, shows the catalogue and indiviual trainings
 """
 
 # for accessing json
@@ -11,7 +12,7 @@ import time
 import sys
 
 # QT stuff
-from PySide import QtCore,QtGui
+from PySide import QtCore, QtGui
 
 # tools
 from GPXParser import GPXParser
@@ -27,7 +28,7 @@ from views.layoutGPXParser import Ui_MainWindow
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """ A QTMain Window, the whole thing
     """
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
 
 
         # this has to be stored in some config file
@@ -40,8 +41,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # disable editable feature in list view
         self.listView.setEditTriggers(
-                QtGui.QAbstractItemView.NoEditTriggers
-                )
+            QtGui.QAbstractItemView.NoEditTriggers)
 
         # instantiate the CatalogueModel and tie to view
         self.model = CatalogueModel(dataDir)
@@ -63,11 +63,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         the corresponding texts
         """
         self.textTotalDistance.setText("{:.1f} km".format(
-                    self.model._summary["totalDistance"]/1000.0))
-        self.textTotalDuration.setText(time.strftime('%H:%M:%S',
-                    time.gmtime(self.model._summary["totalDuration"])))
+            self.model.summary["totalDistance"]/1000.0))
+        self.textTotalDuration.setText(
+            time.strftime('%H:%M:%S', time.gmtime(self.model.summary["totalDuration"])))
         self.textTotalSpeed.setText("{:.1f} km/h".format(
-                    self.model._summary["totalSpeed"]))
+            self.model.summary["totalSpeed"]))
 
     def itemClicked(self):
         """ Callback when just pointing at a  list item
@@ -91,7 +91,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.textDuration.setText(time.strftime('%H:%M:%S', time.gmtime(duration)))
 
         # speed is in m/s so we have to multiply
-        speed =  "{:.1f} km/h".format(self.model.getSpeed(idx))
+        speed = "{:.1f} km/h".format(self.model.getSpeed(idx))
         self.textSpeed.setText(speed)
 
         # and update statusbar
@@ -111,16 +111,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def addTraining(self):
         """Callback to add a new training to the catalogue
         """
-
-        print "Hit callback"
-        fileName, _ = QtGui.QFileDialog.getOpenFileName(parent=self,
-                    caption = 'Select file to be added',
-                    dir = QtCore.QDir.homePath(),
-                    filter = '*.gpx')
-
+        fileName, _ = QtGui.QFileDialog.getOpenFileName(
+            parent=self,
+            caption='Select file to be added',
+            dir=QtCore.QDir.homePath(),
+            filter='*.gpx')
 
 
-        with open('./catalogue.json','r') as fp:
+
+        with open('./data/catalogue.json', 'r') as fp:
             catalogue = json.load(fp)
 
         gpx = GPXParser(source=fileName)
@@ -128,7 +127,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         newTrack  = gpx.summary;
         catalogue.append(newTrack)
 
-        with open('./catalogue.json', 'wb') as f:
+        with open('./data/catalogue.json', 'wb') as f:
             json.dump(catalogue, f)
 
 

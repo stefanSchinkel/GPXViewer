@@ -20,8 +20,8 @@ The dictionaries are taken from GPXParser:
     speed       [<float>]       list of current speeds (in km/h)
     =========   ============    ============================================
 
-The meta data is stored as a json file.
+The meta data is stored as a json file in /daat.
 Another question is where the actual files should go.
 Either in the package or in $HOME or so. Not sure.
 
-The map will be a QTWebview using pygmaps for starters.
+The map is a QTWebview using leafletjs.

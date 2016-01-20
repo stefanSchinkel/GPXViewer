@@ -1,48 +1,41 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
+# pylint: disable=c0103
+
 """ A model for the  training catalogue
 """
 # for accessing json
 import json, os
 
 # QT stuff
-from PySide import QtCore,QtGui
+from PySide import QtCore, QtGui
 
 # for fiddlings w/ ISO8601 and <datetime>s
 from dateutil import parser
 
+debug = True
 
 class CatalogueModel(QtGui.QStandardItemModel):
     """ A simple model to tie to our list view
     """
-    def __init__(self,dataDir, parent=None):
-
+    def __init__(self, dataDir, parent=None):
+        """setup model
+        """
         #init parent
-        super(CatalogueModel,self).__init__(parent)
-
-        # modelSetup
-        # the information contained here should go in a class
-        # that has the relevant lists or rather dicts
-
-        # the whole init thing can be abstracted to
-        # create a list that is name as the key and fill it!
+        super(CatalogueModel, self).__init__(parent)
 
         #read the catalogue file
-        dataFile =os.path.join(dataDir,'catalogue.json')
-        print "reading json" + dataFile
+        dataFile = os.path.join(dataDir, 'catalogue.json')
 
         with open(dataFile) as fp:
             catalogue = json.load(fp)
 
-        print "init lists"
         self._date = []
         self._speed = []
         self._files = []
         self._duration = []
         self._distance = []
 
-        print "filling lists"
         # loop over catalogue and fill
         for training in catalogue:
 
@@ -64,12 +57,12 @@ class CatalogueModel(QtGui.QStandardItemModel):
 
         # once everything is read-in we can sum up
         # and fill summary dict that the view than can query
-        self._summary={}
+        self._summary = {}
         self._summary["totalDistance"] = sum(self._distance)
         self._summary["totalDuration"] = sum(self._duration)
         self._summary["totalSpeed"] = sum(self._speed)/len(self._speed)
 
-    def data(self, index, role = QtCore.Qt.DisplayRole):
+    def data(self, index, role=QtCore.Qt.DisplayRole):
         """ data function is required to names, icons etc
         for the QListView to acutally render nicely
 
@@ -93,39 +86,46 @@ class CatalogueModel(QtGui.QStandardItemModel):
 
         return None
 
-    ###
-    ### Various callbacks to query the model with the pattern
-    ### getVarname(self,index) that returns the proper time from _varname[]
-    ###
-    def getDate(self,index):
+    """
+    Various callbacks to query the model with the getter pattern where
+    getVarname(self,index) that returns the proper time from _varname[]
+    """
+
+    @property
+    def summary(self):
+        """ Access to summary dict
+        """
+        return self._summary
+
+    def getDate(self, index):
         """ returns date from summary
         """
         if not index.isValid():
             return None
         return self._date[index.row()]
 
-    def getSpeed(self,index):
+    def getSpeed(self, index):
         """ returns speed  from summary
         """
         if not index.isValid():
             return None
         return self._speed[index.row()]
 
-    def getDuration(self,index):
+    def getDuration(self, index):
         """ returns duration  from summary
         """
         if not index.isValid():
             return None
         return self._duration[index.row()]
 
-    def getDistance(self,index):
+    def getDistance(self, index):
         """ returns distance  from summary
         """
         if not index.isValid():
             return None
         return self._distance[index.row()]
 
-    def getFile(self,index):
+    def getFile(self, index):
         """ returns distance  from summary
         """
         if not index.isValid():
