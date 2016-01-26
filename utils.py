@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
+# pylint: disable=c0103
 from __future__ import print_function
 import math
-import os
 
 
 def deg2rad(deg):
@@ -84,14 +84,13 @@ def haversine(lon1, lat1, lon2, lat2):
     return dist
 
 def writeTrackFile(gpxFile):
-    from GPXParser import GPXParser
     """Write the trackpoints to src/track.js, which is
     the JS file that renders the track on the map.
 
     :param gpxFile: GPX file holding track
     :type gpxFile: String
     """
-
+    from GPXParser import GPXParser
     # rm old JS
     # os.remove('./src/track.js')
 
@@ -101,7 +100,7 @@ def writeTrackFile(gpxFile):
     # read track details
     gpx.trackDetails()
 
-    trackHeader="""
+    trackHeader = """
     var map = L.map('map').setView([{},{}], 14);
     mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
     L.tileLayer(
@@ -110,19 +109,22 @@ def writeTrackFile(gpxFile):
             maxZoom: 18,
             }}).addTo(map);
     track = ["""
-    trackFooter="""
+    trackFooter = """
     ];
     var polyline = L.polyline(track).addTo(map);
     map.fitBounds(polyline.getBounds());
     """
+
     # open js file
-    with open ('./src/track.js','wb') as fp:
-        print(trackHeader.format(gpx.track['lat'][0],
-                                gpx.track['lon'][0]),
-                                file=fp)
-        for idx in range(gpx.track['N']):
-            print ("\t[{},{}],".format(gpx.track['lat'][idx],
-                                    gpx.track['lon'][idx]),
-                                    file=fp)
-        print(trackFooter,file=fp)
+    with open('./src/track.js', 'wb') as fp:
+        print(trackHeader.format(gpx.track['lat'][0], gpx.track['lon'][0]), file=fp)
+        for idx in range(gpx.track['N']-1):
+            print ("\t[{},{},{},{}],".format(
+                gpx.track['lat'][idx],
+                gpx.track['lon'][idx],
+                gpx.track['distances'][idx],
+                gpx.track['speed'][idx]),
+            file=fp)
+
+        print(trackFooter, file=fp)
 
