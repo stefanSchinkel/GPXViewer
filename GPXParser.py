@@ -240,4 +240,8 @@ class GPXParser(object):
         self.track["speed"] = [(d/t)*3.6 if t > 0.0 else 0.0 for d, t in zip(
             self.track["distances"], self.track["durations"])]
 
-
+        # distance, duration and speed can be computer for n=2 only and thus
+        # are too short
+        self.track["distances"] = [0] + self.track["distances"]
+        self.track["durations"] = [0] + self.track["durations"]
+        self.track["speed"] = [0] + self.track["speed"]

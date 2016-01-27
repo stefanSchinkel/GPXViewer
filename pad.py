@@ -70,8 +70,8 @@ def main():
     track02 = parseFile(gpxFile='./data/Training02.gpx')
     catalogue.append(track02)
 
-    # # track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
-    # # catalogue.append(track03)
+    # track03 = parseFile(gpxFile='./sampleGPX/Herzberg.gpx')
+    # catalogue.append(track03)
 
 
     # sort by date
@@ -80,7 +80,12 @@ def main():
     with open('data/catalogue.json','wb') as fp:
         json.dump(catalogue,fp)
 
-
-
 if __name__ == '__main__':
-    main()
+    # main()
+    gp = GPXParser(source='./data/Training01.gpx')
+    gp.trackSummary()
+    # read track details
+    gp.trackDetails()
+    for k,v in gp.track.iteritems():
+        if isinstance(v, list):
+            print(k, len(v))
