@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# pylint: disable=c0103
 
-from __future__ import print_function,with_statement
+from __future__ import print_function, with_statement
 import json
 from GPXParser import GPXParser
 
@@ -15,8 +17,8 @@ def parseFile(gpxFile):
     # gp.readTrack()
 
     gp.trackSummary()
-    for k,v in gp.summary.iteritems():
-        print("{}\t{}".format(k,v))
+    for k, v in gp.summary.iteritems():
+        print("{}\t{}".format(k, v))
 
     # print("readTrack")
     # # total distances
@@ -26,9 +28,10 @@ def parseFile(gpxFile):
     # print("Total duration is {:.1f} seconds".format(gp.summary["durations"]))
 
     # average speed
-    # print("Average speed is {:.1f} km/h".format(3.6*sum(gp.track["distances"])/sum(gp.track["durations"])))
+    # print("Average speed is {:.1f} km/h".format(3.6*sum(gp.track["distances"])
+        # /sum(gp.track["durations"])))
 
-    return (gp.summary)
+    return gp.summary
 
 def writeTrack(gpxFile):
     """write leaflet compatible track array"""
@@ -75,17 +78,21 @@ def main():
 
 
     # sort by date
-    catalogue.sort(key=lambda item:item['date'], reverse=False)
+    catalogue.sort(key=lambda item: item['date'], reverse=False)
 
-    with open('data/catalogue.json','wb') as fp:
-        json.dump(catalogue,fp)
+    with open('data/catalogue.json', 'wb') as fp:
+        json.dump(catalogue, fp)
 
-if __name__ == '__main__':
-    # main()
+def test():
     gp = GPXParser(source='./data/Training01.gpx')
     gp.trackSummary()
     # read track details
     gp.trackDetails()
-    for k,v in gp.track.iteritems():
+    for k, v in gp.track.iteritems():
         if isinstance(v, list):
             print(k, len(v))
+    print(gp.track["distances"][-20:])
+
+if __name__ == '__main__':
+    # main()
+    test()
