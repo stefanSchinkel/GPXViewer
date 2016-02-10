@@ -119,10 +119,11 @@ def writeTrackFile(gpxFile):
     with open('./src/track.js', 'wb') as fp:
         print(trackHeader.format(gpx.track['lat'][0], gpx.track['lon'][0]), file=fp)
         for idx in range(gpx.track['N']):
-            print ("\t[{},{},{},{}],".format(
+            print ("\t[{},{},{},{},{}],".format(
                 gpx.track['lat'][idx],
                 gpx.track['lon'][idx],
                 gpx.track['distances'][idx],
+                0,
                 gpx.track['speed'][idx]),
             file=fp)
 

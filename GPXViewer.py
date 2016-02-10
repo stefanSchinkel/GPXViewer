@@ -24,7 +24,6 @@ from model.catalogue import CatalogueModel
 #view
 from views.layoutGPXParser import Ui_MainWindow
 
-
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """ A QTMain Window, the whole thing
     """
@@ -124,7 +123,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         gpx = GPXParser(source=fileName)
         gpx.trackSummary()
-        newTrack  = gpx.summary;
+        newTrack = gpx.summary
         catalogue.append(newTrack)
 
         with open('./data/catalogue.json', 'wb') as f:

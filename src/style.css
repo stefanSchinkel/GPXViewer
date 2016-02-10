@@ -23,9 +23,9 @@ html, body{
 }
 
 #slider {
-    width: 50%;
+    width: 75%;
     margin: 2px;
-    float:left;
+    float: left;
 }
 #stats {
     width:20%;
