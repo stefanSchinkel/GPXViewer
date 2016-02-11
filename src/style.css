@@ -23,12 +23,13 @@ html, body{
 }
 
 #slider {
-    width: 75%;
+    width: 70%;
     margin: 2px;
     float: left;
 }
 #stats {
-    width:20%;
+    width:30%;
     margin: 2px;
     text-align: right;
+    white-space: nowrap;
 }

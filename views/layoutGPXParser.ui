@@ -59,13 +59,13 @@
             <property name="title">
              <string>Track Statistics</string>
             </property>
-            <widget class="QWidget" name="">
+            <widget class="QWidget" name="layoutWidget">
              <property name="geometry">
               <rect>
                <x>20</x>
                <y>30</y>
                <width>281</width>
-               <height>91</height>
+               <height>94</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout">
@@ -226,7 +226,7 @@
             </property>
             <property name="url">
              <url>
-              <string>file:///Users/smokie/Projects/gpxviewer/leaflet.html</string>
+              <string>file:///Users/smokie/Projects/gpxviewer/views/leaflet.html</string>
              </url>
             </property>
            </widget>

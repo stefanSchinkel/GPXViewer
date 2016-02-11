@@ -15,8 +15,8 @@ $(function () {
       d = d.toFixed(2);
       v = track[idx][4].toFixed(2);
 
-      if (v.length == 4){
-        v = "0" + v;
+      if (v.length === 4) {
+        v = ' ' + v;
       }
 
       msg = d + " km " + "00:00h " + v + "km/h";
