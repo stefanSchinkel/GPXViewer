@@ -7,16 +7,26 @@
 <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="../src/style.css" />
+<script type="text/javascript" src="../src/slider.js"></script>
 
 </head>
 <body>
     <div id="map"></div>
     <div id="sliderBox">
         <div id="slider"></div>
-        <span id="stats">0.00km  00:00h 00.00km/h</span>
+        <span id="stats">0.00km  00:00:00h 00.00km/h</span>
     </div>
 
-    <script type="text/javascript" src="../src/track.js"></script>
-    <script type="text/javascript" src="../src/slider.js"></script>
+<script type="text/javascript">
+    var map = L.map('map')
+    mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+    L.tileLayer(
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; ' + mapLink,
+            maxZoom: 18,
+            }).addTo(map);
+</script>
+<script type="text/javascript" src="../src/track.js"></script>
+
 </body>
 </html>

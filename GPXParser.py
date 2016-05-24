@@ -249,4 +249,6 @@ class GPXParser(object):
         # sum distances consecutively
         self.track["distances"] = [sum(self.track["distances"][:i+1]) for i in
                                     range(len(self.track["distances"]))]
-
+        # sum distances consecutively
+        self.track["durations"] = [sum(self.track["durations"][:i+1]) for i in
+                                    range(len(self.track["durations"]))]

@@ -100,32 +100,32 @@ def writeTrackFile(gpxFile):
     # read track details
     gpx.trackDetails()
 
-    trackHeader = """
-    var map = L.map('map').setView([{},{}], 14);
-    mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
-    L.tileLayer(
-            'http://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-            attribution: 'Map data &copy; ' + mapLink,
-            maxZoom: 18,
-            }}).addTo(map);
-    track = ["""
-    trackFooter = """
-    ];
+    footer = """
+    map.setView([{lat},{lon}], 14);
     var polyline = L.polyline(track).addTo(map);
+    var marker = L.circle([{lat}, {lon}], 10,{{
+        color: 'red', fillColor: 'red'}}
+        ).addTo(map);
     map.fitBounds(polyline.getBounds());
     """
 
     # open js file
-    with open('./src/track.js', 'wb') as fp:
-        print(trackHeader.format(gpx.track['lat'][0], gpx.track['lon'][0]), file=fp)
-        for idx in range(gpx.track['N']):
-            print ("\t[{},{},{},{},{}],".format(
-                gpx.track['lat'][idx],
-                gpx.track['lon'][idx],
-                gpx.track['distances'][idx],
-                0,
-                gpx.track['speed'][idx]),
-            file=fp)
+    fp = open('./src/track.js', 'w')
 
-        print(trackFooter, file=fp)
+    # track xy coords
+    print("var track = [\n", file=fp)
+    for idx in range(gpx.track['N']):
+        print("\t[{},{}],".format(
+            gpx.track['lat'][idx], gpx.track['lon'][idx]), file=fp)
+    print("];", file=fp)
 
+    # stats
+    print("var stats = [\n", file=fp)
+    for idx in range(gpx.track['N']):
+        print("\t[{},{},{}],".format(
+            gpx.track["distances"][idx], gpx.track["durations"][idx],
+            gpx.track['speed'][idx]), file=fp)
+    print("];", file=fp)
+    #-- footer/map focus
+    print(footer.format(lat=gpx.track['lat'][0], lon=gpx.track['lon'][0]), file=fp)
+    fp.close()

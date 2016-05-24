@@ -88,10 +88,11 @@ def test():
     gp.trackSummary()
     # read track details
     gp.trackDetails()
-    for k, v in gp.track.iteritems():
-        if isinstance(v, list):
-            print(k, len(v))
-    print(gp.track["distances"][-20:])
+    # for k, v in gp.track.iteritems():
+    #     if isinstance(v, list):
+    #         print(k, len(v))
+    # print(gp.track["distances"][-20:])
+    print(gp.track["durations"])
 
 if __name__ == '__main__':
     # main()
