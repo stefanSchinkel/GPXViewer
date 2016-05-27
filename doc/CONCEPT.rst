@@ -1,1 +1,0 @@
-.. include:: ./../Concept.rst

@@ -11,21 +11,15 @@ General Information
 .. toctree::
    :maxdepth: 2
 
-   README
-
 Developers Guide
 ----------------
 
 .. toctree::
    :maxdepth: 2
 
-   CONCEPT
-
    GPXParser
    GPXViewer
    utils
-
-
 
 Indices and tables
 ==================
