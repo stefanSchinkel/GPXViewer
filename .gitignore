@@ -1,5 +1,6 @@
 attic/
-README.html 
+doc/_build
+README.html
 Concept.html
 data/catalogue.json
 views/src/track.js
