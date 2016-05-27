@@ -29,9 +29,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
     def __init__(self, parent=None):
 
-
         # this has to be stored in some config file
-        #dataDir = unicode(os.path.expanduser("~"))
         dataDir = QtCore.QDir.currentPath() + '/data'
 
         # init super and load layout
@@ -73,10 +71,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         # get selected item as Qt ModelIndex *not* <int>
         idx = self.listView.currentIndex()
-        # item =  self.model.data(idx)
 
-        # fill in the track statistics
-        # date & time
+        # fill in the track statistics + date & time
         date = self.model.getDate(idx)
         self.textDate.setText(date.strftime("%d. %b %Y"))
         self.textTime.setText(date.strftime("%H:%M"))
@@ -87,14 +83,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # duration is in secs, so this has to be formated too
         duration = self.model.getDuration(idx)
-        self.textDuration.setText(time.strftime('%H:%M:%S', time.gmtime(duration)))
+        self.textDuration.setText(time.strftime('%H:%M:%S',
+            time.gmtime(duration)))
 
         # speed is in m/s so we have to multiply
         speed = "{:.1f} km/h".format(self.model.getSpeed(idx))
         self.textSpeed.setText(speed)
 
         # and update statusbar
-        self.statusbar.showMessage("Selected Training from " + date.strftime("%d.%m.%Y"))
+        self.statusbar.showMessage("Selected Training from " +
+            date.strftime("%d.%m.%Y"))
 
         # acquire the filename
         gpxFile = self.model.getFile(idx)
@@ -105,7 +103,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         """ On double click the map should be rendered
         """
         idx = self.listView.currentIndex()
-        print "Would render training " + self.model.data(idx)
+        print "I should pop up sometheing for " + self.model.data(idx)
 
     def addTraining(self):
         """Callback to add a new training to the catalogue
@@ -115,8 +113,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             caption='Select file to be added',
             dir=QtCore.QDir.homePath(),
             filter='*.gpx')
-
-
 
         with open('./data/catalogue.json', 'r') as fp:
             catalogue = json.load(fp)
@@ -129,25 +125,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         with open('./data/catalogue.json', 'wb') as f:
             json.dump(catalogue, f)
 
-
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     win = MainWindow()
     win.show()
     win.raise_()
     sys.exit(app.exec_())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

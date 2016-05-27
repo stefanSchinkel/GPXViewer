@@ -1,8 +1,9 @@
 GPXViewer - Concept
 ===================
 
-The GUI layout is clear. QTListView left,
-stats on the top right, map below.
+The GUI layout is simple:
+QTListView left, stats on the top right, map below.
+The map is a QTWebview using leafletjs.
 
 Listview is bound to a *CatalogeModel* that holds the lists of dictionaries.
 The dictionaries are taken from GPXParser:
@@ -20,8 +21,7 @@ The dictionaries are taken from GPXParser:
     speed       [<float>]       list of current speeds (in km/h)
     =========   ============    ============================================
 
-The meta data is stored as a json file in /daat.
+The meta data is stored as a json file in /data.
 Another question is where the actual files should go.
-Either in the package or in $HOME or so. Not sure.
+Either in the package or in $HOME or so.
 
-The map is a QTWebview using leafletjs.

@@ -57,9 +57,10 @@ from utils import haversine
 debug = False
 
 class GPXParser(object):
-    """ GPXParser - reads a gpx file and an by default assumes the
+    """ GPXParser - reads a gpx file and by default assumes the
     namespace: http://www.topografix.com/GPX/1/1.
-    While there can be multiple <trkseg> but for the first implementation
+    While there can be multiple <trkseg> in a gpx file, this class only uses
+    the rst implementation
     we just collect all <trkpt> and continue.
 
 
@@ -84,12 +85,12 @@ class GPXParser(object):
 
     def __init__(self, source='', namespaces=None):
         """ Instantiates an GPXParser object
-
        """
         # setup data file
         if source is None:
-            #only for testing
+            #only during devel
             self._source = './data/Training01.gpx'
+            # raise SomeError()
         else:
             self._source = source
 
@@ -144,8 +145,8 @@ class GPXParser(object):
             print "I found %d trackpoints" % self.track["N"]
 
     def trackSummary(self):
-        """ Parse only the key data needed for the model in GPXViewer. Details will
-        only be read on demand.
+        """ Parse only the key data needed for the model in GPXViewer.
+        Details will only be read on demand.
 
         This function populates the summary dictionary.
 
@@ -163,8 +164,10 @@ class GPXParser(object):
         self.summary["date"] = time[0].text
 
         # duration
-        t0 = dateutil.parser.parse(self.allPoints[0].find('gpx:time', self.namespaces).text)
-        t1 = dateutil.parser.parse(self.allPoints[-1].find('gpx:time', self.namespaces).text)
+        t0 = dateutil.parser.parse(self.allPoints[0].find('gpx:time',
+            self.namespaces).text)
+        t1 = dateutil.parser.parse(self.allPoints[-1].find('gpx:time',
+            self.namespaces).text)
         self.summary["duration"] = (t1-t0).total_seconds()
 
         # distance
@@ -206,21 +209,23 @@ class GPXParser(object):
             # lat/lon/ele are just list of floats
             self.track["lat"].append(float(point.attrib['lat']))
             self.track["lon"].append(float(point.attrib['lon']))
-            self.track["ele"].append(float(point.find('gpx:ele', self.namespaces).text))
+            self.track["ele"].append(float(point.find('gpx:ele',
+                self.namespaces).text))
 
             # self.time  are datetime instances whereas track["time"] are
             # ISO strings (so the can be serialized)
             times.append(dateutil.parser.parse(
                 point.find('gpx:time', self.namespaces).text
                 ))
-            self.track["time"].append(point.find('gpx:time', self.namespaces).text)
+            self.track["time"].append(point.find('gpx:time',
+                self.namespaces).text)
 
         # here we already compute individual steps between trackpoints
 
         # 1) distance (haversine)
         # list comprehension is fancy but a tad unreadable
         # also decide wether we need haversion or if euclidean is enough
-        self.track["distances"] = [haversine(y0, x0, y1, x1)  for x0, x1, y0, y1 in zip(
+        self.track["distances"] = [haversine(y0, x0, y1, x1) for x0, x1, y0, y1 in zip(
             self.track["lat"][:-1], self.track["lat"][1:],
             self.track["lon"][:-1], self.track["lon"][1:])]
 
