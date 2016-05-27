@@ -1,4 +1,8 @@
 attic/
-
+README.html 
+Concept.html
+data/catalogue.json
+views/src/track.js
+*.gpx
 *.pyc
 *.p
