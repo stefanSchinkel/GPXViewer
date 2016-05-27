@@ -1,4 +1,4 @@
-/*global $, stats, track, marker */
+/*global $, stats, track, marker, info */
 
 $(function () {
   "use strict";
@@ -29,7 +29,9 @@ $(function () {
       if (v.length < 5) { v = ' ' + v; }
 
       msg = d + " km " + tms + "h "  + v + "km/h";
-      $("#stats").text(msg);
+
+      // write to info box
+      info.update({"time" : msg});
 
       // move the marker
       marker.setLatLng([lat, lon]);

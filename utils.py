@@ -100,17 +100,8 @@ def writeTrackFile(gpxFile):
     # read track details
     gpx.trackDetails()
 
-    footer = """
-    map.setView([{lat},{lon}], 14);
-    var polyline = L.polyline(track).addTo(map);
-    var marker = L.circle([{lat}, {lon}], 10,{{
-        color: 'red', fillColor: 'red'}}
-        ).addTo(map);
-    map.fitBounds(polyline.getBounds());
-    """
-
     # open js file
-    fp = open('./src/track.js', 'w')
+    fp = open('./views/src/track.js', 'w')
 
     # track xy coords
     print("var track = [\n", file=fp)
@@ -127,5 +118,4 @@ def writeTrackFile(gpxFile):
             gpx.track['speed'][idx]), file=fp)
     print("];", file=fp)
     #-- footer/map focus
-    print(footer.format(lat=gpx.track['lat'][0], lon=gpx.track['lon'][0]), file=fp)
     fp.close()
