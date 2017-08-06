@@ -10,12 +10,13 @@
 import unittest
 import sys
 from os import path
-sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 import utils
 
 # that kinda summarizes the current situation ...
 EMBARRASSING = True
+
 
 class TestsGPXViewer(unittest.TestCase):
     """ Tests go here.

@@ -17,6 +17,7 @@ def deg2rad(deg):
 
     return deg / (180 / math.pi)
 
+
 def euclidean(lon1, lat1, lon2, lat2):
     """
     Calculate the euclidean distance between two points
@@ -35,8 +36,6 @@ def euclidean(lon1, lat1, lon2, lat2):
     :rtype: <float>
     """
 
-
-
     ONE_DEGREE = 1000. * 10000.8 / 90.
     coef = math.cos(lat1 / 180. * math.pi)
     x = lat2 - lat1
@@ -44,6 +43,7 @@ def euclidean(lon1, lat1, lon2, lat2):
     distance = math.sqrt(x * x + y * y) * ONE_DEGREE
 
     return distance
+
 
 def haversine(lon1, lat1, lon2, lat2):
     """
@@ -69,7 +69,7 @@ def haversine(lon1, lat1, lon2, lat2):
     # haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
     c = 2 * math.asin(math.sqrt(a))
 
     # 63710000 m is the radius of the Earth
@@ -82,6 +82,7 @@ def haversine(lon1, lat1, lon2, lat2):
     #                      math.cos(deg2rad(lat2)) *
     #                      math.cos(deg2rad(lon1 - lon2)))
     return dist
+
 
 def writeTrackFile(gpxFile):
     """Write the trackpoints to src/track.js, which is
@@ -117,5 +118,5 @@ def writeTrackFile(gpxFile):
             gpx.track["distances"][idx], gpx.track["durations"][idx],
             gpx.track['speed'][idx]), file=fp)
     print("];", file=fp)
-    #-- footer/map focus
+    # -- footer/map focus
     fp.close()
